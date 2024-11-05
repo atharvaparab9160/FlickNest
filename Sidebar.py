@@ -48,6 +48,15 @@ def Display_Sidebar():
     # Page configuration
     st.set_page_config(layout="centered", initial_sidebar_state="collapsed")
 
+    hide_st_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        </style>
+    """
+    st.markdown(hide_st_style, unsafe_allow_html=True)
+
     # Custom CSS for better sidebar design
     st.markdown(
         """
