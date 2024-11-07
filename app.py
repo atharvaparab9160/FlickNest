@@ -369,7 +369,7 @@ else:
         popularity_score = st.slider(
             "Select Popularity",
             int(movies_data["popularity"].min()),
-            int(movies_data["popularity"].max()),
+            int(100),
             step=1
         )
         if st.button("Recommend"):
