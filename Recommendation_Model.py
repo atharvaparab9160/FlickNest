@@ -98,9 +98,12 @@ def get_Movie_Banner(m_id):
     # st.write(data)
 
     base = "https://image.tmdb.org/t/p/original"
-    if data["backdrop_path"] != None:
-        return base + data["backdrop_path"]
-    else:
+    try:
+        if data["backdrop_path"] != None:
+            return base + data["backdrop_path"]
+        else:
+            return base + "/fhv3dWOuzeW9eXOSlr8MCHwo24t.jpg"
+    except:
         return base + "/fhv3dWOuzeW9eXOSlr8MCHwo24t.jpg"
 
 
