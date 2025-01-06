@@ -70,7 +70,7 @@ def Display_Sidebar():
 # remove watermark
 hide_st_style = """
             <style>
-            #MainMenu {visibility: hidden;}
+            div[data-testid="stToolbar"] {visibility: hidden;}
             footer {visibility: hidden;}
             header {visibility: hidden;}
             </style>
