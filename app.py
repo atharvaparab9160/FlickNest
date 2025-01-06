@@ -67,6 +67,15 @@ def Display_Sidebar():
 #     page_title="FlickNest"
 # )
 # st.set_page_config(page_title="FlickNest",layout="centered", initial_sidebar_state="collapsed")
+# remove watermark
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
 
 class MultiApp:
