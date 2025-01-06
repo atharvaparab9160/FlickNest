@@ -2,278 +2,213 @@ import pandas as pd
 import pickle
 import requests
 import streamlit as st
-import time
+# st.set_page_config(page_title="FlickNest",layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="FlickNest",layout="centered", initial_sidebar_state="auto")
 from datetime import date
 from streamlit_navigation_bar import st_navbar
+from streamlit_option_menu import option_menu
 
-##############################################
-######## MOVIE RECOMMENDATION MODEL ##########
-##############################################
-from Recommendation_Model import get_cast
-from Recommendation_Model import get_discription
-from Recommendation_Model import get_poster_path
-from Recommendation_Model import get_trending
-from Recommendation_Model import recommend_similar_movie
-from Recommendation_Model import get_general_recommendations
-from Recommendation_Model import get_specific_genre_movie
-
-from Recommendation_Model import similarity_matrix
-from Recommendation_Model import movies_data
-
-
-##############################################
-######## MOVIE REVIEW SENTIMENT MODEL ########
-##############################################
-from Review_Sentiment_Analysis_Model import get_reviews
-from Review_Sentiment_Analysis_Model import Review_sentiment
-
-#############################################
-########### MOVIE DETAILS ###################
-#############################################
-from Display_Movie_Discription import display_movie_details
-
-#############################################
-########### SIDEBAR  ########################
-#############################################
-from Sidebar import Display_Sidebar
-#############################################
-###########  NAVBAR  ########################
-#############################################
-from Navbar import display_navbar
-
-#############################################
-########### MOVIE BY GENRE ###################
-#############################################
 from Display_genre_movies import display_movie_of_genre
 
 
 ##############################################
-############## MOVIE SLIDER ##################
+######## MOVIE RECOMMENDATION MODEL ##########
 ##############################################
-
-def Movie_Slider():
-    no_of_movies = 7
-    trending_Movie  = get_trending(no_of_movies)
-    carousel_boot_link = '''
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-            crossorigin="anonymous"></script>
-
-    <style>
-    #slider {
-        position: absolute;
-    }
-
-    .title {
-        size: 5rem;
-    }
-
-    .rating {
-        size: 1rem;
-    }
-
-    .slider-image { 
-        /* position: absolute; */
-
-        z-index: -1;
-        height: 100vh;
-        width: 100vw;
-        # opacity: 0.5;
-
-     }
-
-    #slider-info {
-            width: 100vw;
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translate(-50%, 13%);
-            color: white;
-            font-size: 24px;
-            # font-weight: bold; 
-            text-align: left;
-            background-color: rgba(0, 0, 0, 0.5); 
-            padding: 10px;
-        /* white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 48%; */
-
-    }
-    .info-title{
-        display: inline-block;
-        font-weight: bold;
-        font-size: 2rem;
-
-        width: 95vw; /* Adjust the width as per your requirements */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .info-rating{
-        font-weight:600;
-        font-size: 1.3rem;
-    }
-    .info-genre{
-        font-size: 1.8rem;
-        color: rgba(157, 157, 157, 1);
-        # font-weight:bold;
-    }
-    .info-overview{
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* Number of lines to show */
-        -webkit-box-orient: vertical;
-        /* white-space: nowrap; */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        font-size: 0.9rem;
-    }
-    @media screen and (min-width: 0px) and (max-width:296px){
-        #slider-info{
-            top: 65%;
-        }
-    }
-    </style>        
-
-    '''
-    carousel_start = '''
-    <div id="carouselExampleRide" class="carousel slide carousel-fade" data-ride="carousel" data-bs-ride="true">
-    <div class="carousel-inner">
-    '''
-    carousel_end = '''
-        </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span> 
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-
-    '''
-    Full_html = ""
-    Full_html += carousel_boot_link
-    Full_html += carousel_start
-
-    for i in range(no_of_movies):
-        title = trending_Movie[i][0]
-        genre = trending_Movie[i][1]
-        image_path = trending_Movie[i][2]
-        overview = trending_Movie[i][3]
-        rating = trending_Movie[i][4]
-        m_id = trending_Movie[i][5]
-        if i == 0:
-            carousel_top_sliders = f'''
-                <div class="carousel-item active">
-                    <a href="?movie_id={m_id}" target="_blank">
-                    <img class="slider-image" src="{image_path}" alt="...">
-                    </a>
-                    <div id="slider-info">
-                        <span class="info-title">{title}</span><br>
-                        <span class="info-rating">Ratings : {rating}</span><br>
-                        <span class="info-genre">{genre}</span><br>
-                        <span class="info-overview">{overview}</span>
-                    </div>
-                    
-                </div>
-                '''
-            Full_html += carousel_top_sliders
-        else:
-            carousel_sliders = f'''
-                <div class="carousel-item">
-                    <a href="?movie_id={m_id}" target="_blank">
-                    <img class="slider-image" src="{image_path}" alt="...">
-                    </a>
-                    <div id="slider-info">
-                        <span class="info-title">{title}</span><br>
-                        <span class="info-rating">Ratings : {rating}</span><br>
-                        <span class="info-genre">{genre}</span><br>
-                        <span class="info-overview">{overview}</span>
-                    </div>
-                </div>
-                '''
-            Full_html += carousel_sliders
-
-
-    Full_html += carousel_end
-    st.components.v1.html(Full_html, height=500)
-
-
-
-
-# START START START START START START START START START START START START START START START START START START START START START
-# START START START START START START START START START START START START START START START START START START START START START START
-
-
-
-query_params = st.query_params
-if 'selected_movie' not in st.session_state:
-    st.session_state['selected_movie'] = None
-if 'selected_genre' not in st.session_state:
-    st.session_state['selected_genre'] = None
-
-if 'movie_id' in query_params:
-    st.session_state['selected_movie'] = int(query_params['movie_id'])
-if 'genre_type' in query_params:
-    st.session_state['selected_genre'] = query_params['genre_type']
-
+import Home
 #
-# side bar
 #
-Display_Sidebar()
-st.title("FlickNest")
+# ##############################################
+# ######## MOVIE RECOMMENDATION MODEL ##########
+# ##############################################
+# from Recommendation_Model import get_cast
+# from Recommendation_Model import get_discription
+# from Recommendation_Model import get_poster_path
+# from Recommendation_Model import get_trending
+# from Recommendation_Model import recommend_similar_movie
+# from Recommendation_Model import get_general_recommendations
+# from Recommendation_Model import get_specific_genre_movie
+#
+# from Recommendation_Model import similarity_matrix
+# from Recommendation_Model import movies_data
+#
+#
+# ##############################################
+# ######## MOVIE REVIEW SENTIMENT MODEL ########
+# ##############################################
+# from Review_Sentiment_Analysis_Model import get_reviews
+# from Review_Sentiment_Analysis_Model import Review_sentiment
+#
+# #############################################
+# ########### MOVIE DETAILS ###################
+# #############################################
+# from Display_Movie_Discription import display_movie_details
+#
+# #############################################
+# ########### MOVIE GENRE ###################
+# #############################################
+# from Display_genre_movies import display_movie_of_genre
 
-if st.session_state['selected_movie'] is not None:
-    # movie discription by movie id
-    display_movie_details(st.session_state['selected_movie'])
+#############################################
+########### Login/SignUp Page ###################
+#############################################
+import User_Login_Signup
 
-    if st.button("Go Back"):
-        st.session_state['selected_movie'] = None
-        st.query_params.clear()
-        time.sleep(1)
-        st.rerun()
+#############################################
+########### Special_Recommendation ###################
+#############################################
 
-
-elif st.session_state['selected_genre'] is not None:
-    # movie genre by movie id
-
-    display_movie_of_genre(st.session_state['selected_genre'])
-    # display_movie_of_genre("Action")
-    if st.button("Go Back"):
-        st.session_state['genre_type'] = None
-        st.query_params.clear()
-        time.sleep(1)
-        st.rerun()
+import Special_Recommendation
 
 
+def Display_Sidebar():
+    ...
 
-else:
+# st.set_page_config(
+#     page_title="FlickNest"
+# )
+# st.set_page_config(page_title="FlickNest",layout="centered", initial_sidebar_state="collapsed")
+
+
+class MultiApp:
+    def __init__(self):
+        self.apps = []
+
+    def add_app(self, title, function):
+        self.apps.append({
+            "title": title,
+            "function": function
+        })
+
+    def run(self):
+
+        with st.sidebar:
+            apps_op  = option_menu(
+                menu_title='FlickNest',
+                options=['Home', 'Account','---','For You','---','Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family',
+                      'Fantasy','Foreign', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'ScienceFiction', 'TVMovie',
+                      'Thriller','War', 'Western'],
+                icons=['house-fill', 'person-circle' , "award-fill" , "award-fill" ],
+                menu_icon='film',
+                default_index=0,
+                styles={
+                    "container": {"padding": "5!important", "background-color": 'black'},
+                    "icon": {"color": "white", "font-size": "23px" },
+                    "nav-link": {"color": "white", "font-size": "20px", "text-align": "left", "margin": "5px",
+                                 "--hover-color": "blue"},
+                    "nav-link-selected": {"background-color": "#02ab21"}, }
+            )
+
+
+            # genres = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family',
+            #           'Fantasy',
+            #           'Foreign', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'ScienceFiction', 'TVMovie',
+            #           'Thriller',
+            #           'War', 'Western']
+
+
+
+            # Custom CSS for better sidebar design
+            # st.markdown(
+            #     """
+            #     <style>
+            #     /* Sidebar style */
+            #     .sidebar .sidebar-content {
+            #         padding-top: 20px;
+            #     }
+            #
+            #     .genre-link {
+            #         font-size: 18px;
+            #         text-decoration: none;
+            #         margin: 10px 0;
+            #         display: block;
+            #         padding: 8px;
+            #         border-radius: 5px;
+            #         transition: background-color 0.3s, color 0.3s;
+            #     }
+            #     .genre-link:hover {
+            #         background-color: #f0f0f0;
+            #         color: #1f77b4;
+            #     }
+            #     </style>
+            #     """,
+            #     unsafe_allow_html=True
+            # )
+
+            # Sidebar with title, description, and styled genre links
+            # with st.sidebar:
+            # st.markdown("<h1>FlickNest</h1>", unsafe_allow_html=True)
+            # st.markdown("<h1><u>Explore by Genre</u></h1>", unsafe_allow_html=True)
+            # st.markdown("<h3>Find movies by selecting a genre below. Discover your next favorite film!</h3>",
+            #                 unsafe_allow_html=True)
+            # for genre in genres:
+            #     st.markdown(f"<a class='genre-link' href='?genre_type={genre}'>{genre} Movies</a>",
+            #                     unsafe_allow_html=True)
+        genresList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family',
+                      'Fantasy','Foreign', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'ScienceFiction', 'TVMovie',
+                      'Thriller','War', 'Western']
+        # st.write(SelectedGenere)
+
+        if apps_op == "Home":
+            Home.app()
+        elif apps_op == "Account":
+            User_Login_Signup.app()
+        elif apps_op == "For You":
+            Special_Recommendation.app()
+        elif apps_op in genresList:
+            display_movie_of_genre(apps_op)
+
+
+RunObj = MultiApp()
+RunObj.run()
+
+
+    # Sample genres
+    # genres = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family',
+    #                          'Fantasy',
+    #                          'Foreign', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'ScienceFiction', 'TVMovie',
+    #                          'Thriller',
+    #                          'War', 'Western']
     #
-    # NAVBAR
+    # # Page configuration
+    # st.set_page_config(layout="centered", initial_sidebar_state="collapsed")
     #
-
-
     #
-    # MAIN CONTENT
+    # # Custom CSS for better sidebar design
+    # st.markdown(
+    #     """
+    #     <style>
+    #     /* Sidebar style */
+    #     .sidebar .sidebar-content {
+    #         padding-top: 20px;
+    #     }
     #
-
-
-
-    # temphtml = f"""
-    #             <a href="?genre_type=Action">
-    #                 <h2>Action</h2>
-    #             </a>
-    #             """
-    # st.markdown(temphtml, unsafe_allow_html=True)
+    #     .genre-link {
+    #         font-size: 18px;
+    #         text-decoration: none;
+    #         margin: 10px 0;
+    #         display: block;
+    #         padding: 8px;
+    #         border-radius: 5px;
+    #         transition: background-color 0.3s, color 0.3s;
+    #     }
+    #     .genre-link:hover {
+    #         background-color: #f0f0f0;
+    #         color: #1f77b4;
+    #     }
+    #     </style>
+    #     """,
+    #     unsafe_allow_html=True
+    # )
     #
-    # MOVIE SLIDER CAROUSEL
+    # # Sidebar with title, description, and styled genre links
+    # with st.sidebar:
+    #     st.markdown("<h1>FlickNest</h1>", unsafe_allow_html=True)
+    #     st.markdown("<h1><u>Explore by Genre</u></h1>", unsafe_allow_html=True)
+    #     st.markdown("<h3>Find movies by selecting a genre below. Discover your next favorite film!</h3>", unsafe_allow_html=True)
+    #     for genre in genres:
+    #         st.markdown(f"<a class='genre-link' href='?genre_type={genre}'>{genre} Movies</a>", unsafe_allow_html=True)
     #
+<<<<<<< Updated upstream
     # st.write(get_specific_genre_movie("Action",10))
     st.markdown("<h2>Audience All-Stars✨</h2>", unsafe_allow_html=True)
     Movie_Slider()
@@ -508,3 +443,5 @@ else:
 
 
 
+=======
+>>>>>>> Stashed changes

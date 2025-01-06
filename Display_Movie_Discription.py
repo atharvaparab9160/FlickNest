@@ -6,11 +6,22 @@ from datetime import date
 from streamlit_navigation_bar import st_navbar
 
 ##############################################
+######## DataBase Magament ##########
+##############################################
+from Database_Management import add_wishlist
+
+from streamlit_cookies_controller import CookieController
+
+
+
+##############################################
 ######## MOVIE RECOMMENDATION MODEL ##########
 ##############################################
 from Recommendation_Model import get_cast
 from Recommendation_Model import get_discription
 from Recommendation_Model import get_poster_path
+from Recommendation_Model import get_video_path
+from Recommendation_Model import get_Movie_Banner
 from Recommendation_Model import get_trending
 from Recommendation_Model import recommend_similar_movie
 
@@ -25,18 +36,102 @@ from Review_Sentiment_Analysis_Model import get_reviews
 from Review_Sentiment_Analysis_Model import Review_sentiment
 
 
-
+def bg_image(poster):
+    background_image_css = f"""
+    <style>
+    [data-testid="stAppViewContainer"]{{
+        background: 
+            linear-gradient(
+                rgba(0, 0, 0, 0.6),  /* Semi-transparent overlay */
+                rgba(0, 0, 0, 0.6)   /* Semi-transparent overlay */
+            ), 
+            url("{poster}");         /* Background image */
+        background-size: cover;        /* Ensure the image fills the container */
+        background-position: center;   /* Center the image */
+        background-repeat: no-repeat;  /* Prevent tiling */
+    }}
+    [data-testid="stHeader"]{{
+            background: 
+                linear-gradient(
+                    rgba(0, 0, 0, 0.6),  /* Semi-transparent overlay */
+                    rgba(0, 0, 0, 0.6)   /* Semi-transparent overlay */
+                ), 
+                url("https://maven-uploads.s3.amazonaws.com/120386748/projects/netflix%20image.jpg"); /* Background image */
+            background-size: cover;        /* Adjust to fill the container */
+            background-position: center;   /* Center the image */
+            background-repeat: no-repeat;  /* Prevent tiling */
+        }}
+    </style>
+    """
+    st.markdown(background_image_css, unsafe_allow_html=True)
 
 def display_movie_details(movie_id):
     ##############################################
     ######## MOVIE DISPLAY PART ##################
     ##############################################
+    poster = get_Movie_Banner(movie_id)
+    bg_image(poster)
+
 
     movie = movies_data[movies_data['movie_id'] == movie_id].iloc[0]
-    st.image(get_poster_path(movie_id), width=230)
+    # st.write(movies_data[movies_data['movie_id'] == movie_id].iloc[0])
+    movie_vdo_path = get_video_path(movie_id)
+    col1, col2 = st.columns([1,2.60])
+    with col1:
+        st.image(get_poster_path(movie_id), width=230)
+    with col2:
+        # fff = "https://youtu.be/dEfzQkfb60E?si=SlAbaqCTLjBStX3f"
+        st.video(movie_vdo_path, format="video/mp4", start_time=0, subtitles=None, end_time=None, loop=False, autoplay=False,
+                 muted=False)
+
     st.header(movie['title'])
     st.write(get_discription(movie_id))
-    st.write("Genres: ", ', '.join(movie['genres']))
+    # st.write("GENRES: ", ', '.join(movie['genres']))
+    st.markdown(f"<h5>Genres : {', '.join(movie['genres'])}</h5>",
+                unsafe_allow_html=True)
+
+
+    #
+    # wishlist
+    #
+    # def add_to_wishlist(movie_id):
+    #     st.success(f"Movie with ID {movie_id} has been added to the wishlist!")
+
+
+    # Add global CSS styling for the button appearance
+    st.markdown("""
+        <style>
+        .st-key-image_button button {
+            background: url('https://i.ibb.co/gwQpsfx/wishlist.png') no-repeat center;
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border: none;
+            cursor: pointer;
+            text-indent: -9999px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+
+    # https://i.ibb.co/gwQpsfx/heart.png  filled
+    # https://i.ibb.co/CVygC1g/wishlist.png    empty
+    controller = CookieController()
+    user_id = controller.get(name='FlickNest_userid_cookie')
+    # print(user_id)
+
+    # Create a button that triggers the function
+    if st.button("Add to Wishlist", key="image_button"):
+        # add_to_wishlist(movie_id)
+        controller = CookieController()
+        user_id = controller.get(name='FlickNest_userid_cookie')
+        # print(Flicknest_userid,Flicknest_password,Flicknest_email)
+        if user_id!=None:
+            add_wishlist(user_id,movie_id,movie['title'])
+        else:
+            st.warning("Login To Create a Wishlist!!")
+
+
     #
     # cast
     #
@@ -69,7 +164,7 @@ def display_movie_details(movie_id):
 
     .card-title {
         font-size: 1.2em;
-        text-allign:center;
+        text-align:center;
         color :black;
         margin: 1px;
     }
@@ -93,7 +188,7 @@ def display_movie_details(movie_id):
         start += f"""
     <div class="card">
             <img src={cast_image[i]} alt="Card Image 2">
-            <h3 class="card-title">{cast_name[i]} as {cast_character[i]}</h3>
+            <span class="card-title">{cast_name[i]} as {cast_character[i]}</span>
         </div>
 
     """
@@ -179,15 +274,32 @@ def display_movie_details(movie_id):
                             </a>
                             """
                 st.markdown(image_html, unsafe_allow_html=True)
-                st.text(disc_movie_name[i])
+                # st.text(disc_movie_name[i])
+                st.markdown(
+                    f"""
+                                                                                    <div style="overflow-x: auto; white-space: nowrap;">
+                                                                                        {disc_movie_name[i]}
+                                                                                    </div>
+                                                                                    """,
+                    unsafe_allow_html=True
+                )
             with col2:
+
                 image_html = f"""
                             <a href="?movie_id={disc_movie_id[i + 1]}">
                                 <img src="{disc_movie_poster[i + 1]}" style="width: 13vw;" class ="clickable-image"/>
                             </a>
                             """
                 st.markdown(image_html, unsafe_allow_html=True)
-                st.text(disc_movie_name[i + 1])
+                # st.text(disc_movie_name[i + 1])
+                st.markdown(
+                    f"""
+                                                                    <div style="overflow-x: auto; white-space: nowrap;">
+                                                                        {disc_movie_name[i + 1]}
+                                                                    </div>
+                                                                    """,
+                    unsafe_allow_html=True
+                )
             with col3:
                 image_html = f"""
                             <a href="?movie_id={disc_movie_id[i + 2]}">
@@ -195,7 +307,15 @@ def display_movie_details(movie_id):
                             </a>
                             """
                 st.markdown(image_html, unsafe_allow_html=True)
-                st.text(disc_movie_name[i + 2])
+                # st.text(disc_movie_name[i + 2])
+                st.markdown(
+                    f"""
+                                                                    <div style="overflow-x: auto; white-space: nowrap;">
+                                                                        {disc_movie_name[i + 2]}
+                                                                    </div>
+                                                                    """,
+                    unsafe_allow_html=True
+                )
             with col4:
                 image_html = f"""
                             <a href="?movie_id={disc_movie_id[i + 3]}">
@@ -203,4 +323,12 @@ def display_movie_details(movie_id):
                             </a>
                             """
                 st.markdown(image_html, unsafe_allow_html=True)
-                st.text(disc_movie_name[i + 3])
+                # st.text(disc_movie_name[i + 3])
+                st.markdown(
+                    f"""
+                                                    <div style="overflow-x: auto; white-space: nowrap;">
+                                                        {disc_movie_name[i + 3]}
+                                                    </div>
+                                                    """,
+                    unsafe_allow_html=True
+                )

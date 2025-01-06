@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "flicknest-user-database",
+  "private_key_id": "75b40c88a2c3c567acc56838705ee949ef725d33",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDMg/rgGMxVuiUy\nYkFd/aaFETaWo1s48RPT5nmAvuT6bvYxPtWdIDvQ1/ScG/6I6Yaw1yxO7qihtWHG\nI1EY7+/rlHA27W2isUDmcSax16JR7Qrg34pUHwNa6tcza8ruiYNK42BWnjU9MsZw\nGRjQ0SGrwwzeNyE0GHafI//jeWuop24ocsKQaKhwUqj2DtyYy4CgNAU4bbwG6zsH\ntXLJ6f1MqmcAkEzMHbIgma/dsekqlvy0BCQzBD4qn4aJLQn1+svPxropqgVFjskh\nZ7bFZYDYDUWrsjgXvAfjIC5rjKPSQwMUpGPDmqon3Ss062s0f4sPaWM3Chj8ER0J\nuRPSeLPfAgMBAAECggEAAjMH0DHM9vaZ1c2msoeB5CZyrtYHjo3C62FzPGKmfNi+\nMM/UEAlJ7SoHJbm9Hx3NkVbWJtAKcjVpCBk6PbQUL6cm5HIaUIF5CRa2pJehY8xg\nrXW9gsAT9ppyXcmH+F67Ubi9XXvDn+qF+x32a5QEKzyWTLpbRLh8Z9yad/qN9pyp\naIHVUiRxzP+R9BNkaCER4KZDM1Y6VpMbCjbgG8TJnSxF6U95+/rjn6a++aXatbu5\nMMQEb3A3UN4W+PDNfiqJXJz/sis4cKErHIr5gGKknEIZtXm222pPK9vPlwgcmpcO\nwEH3X13q/AOCL7zs/OOdZCyVFeATR/kCERz6OY+riQKBgQDn/zELPGWvxy2qYgQf\ni61GuA+T0Hubrk5PkvPYEwdp+dv4WOVjeAKoPYvPkGc9dogGYAkD+PNQQ9Gd59mI\n8LhoxeMX4QCV6YE+05A8RvhUCM1QSf0kmGGZdlBZQ9MmL6Q3KTBod8nRbdntsnCr\nbGsqWv1RwtnHLh2qAr1yMNgNLQKBgQDhrOb4Rn7lP5dFA1lN9D62jttTZy9O6XaY\n4q+RR0ngtPYTMLVg6MFNVUIdqqom/WVHRdxCNJUyHnlfmUutoQk/d8cwcxwoV0/I\nj//7txQ5cAaepE7i5eL0wtME/3k1nwe6c12DwGO1RobR8WMJYjxP/e0fxtOtmtTi\nAxejnXfkuwKBgQCw7Ck/s1is+420wTj5wbBsHRQsGrMZX41zG9N/9csSo6yAMXMG\nL1B/cyg7K5nAArPrgLN/ZwxPKtkhvd1klIddx4PPAxVKPiAFhJwbi9f3ZhsFXteB\nYAAWY2cVHCdbmLt4IZ48HRY487hdkFZiNLVpQKitAJbKUj3nGF3XRq6NJQKBgCQK\n/FyczbmJfXxtO38iyj1X9ZmNelXNHb7vPYEjdJ4p6L9J4T4YDn9uZX/deQ1/HQTU\nGIiOY2G80j+9eQPDG3oChFKtn8qlnz12Gjk2lUlTJguCTIMamjPjRdafgtlYi+Bw\nengHayVRnUi8l8ew49cWxB92Huq0NtneCpF8HeDvAoGARUiKf4iHkJkmsforgGNd\nWdaZEJOUjOt6C5P41ctk8M3PmqprJ4a0PuoeosVhA+UqWxAnS8FAvMBxfgKsgoTM\noRaGXIOZiY7nIkt2/0KCLVb8R4i5zahOsd+tN4c+ITFIKByEFqrCZZCuAP6/MRRc\n5xLx8XfZaXfoe9XWovHo8E0=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-4pj12@flicknest-user-database.iam.gserviceaccount.com",
+  "client_id": "114358072739362942761",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4pj12%40flicknest-user-database.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
